@@ -3,9 +3,9 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const somPentakill = new Audio('p/Users/leo_sandes/Desktop/MeuJogoWuju/campeoes/pentakill-lol.mp3');
+const somPentakill = new Audio('campeoes/pentakill-lol.mp3');
 const imgTeemo = new Image();
-imgTeemo.src = 'p/Users/leo_sandes/Desktop/MeuJogoWuju/campeoes/capeteemo_silhouette.svg';
+imgTeemo.src = 'campeoes/capeteemo_silhouette.svg';
 
 let jogoRodando = false;
 let campeaoEscolhido = '';
