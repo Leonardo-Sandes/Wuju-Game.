@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treino Wuju - Sobrevivência</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="start-screen">
+        <h1>Treino Wuju</h1>
+        
+        <input type="text" id="player-nick" placeholder="Digite seu Nickname" autocomplete="off" maxlength="15">
+        
+        <div id="instructions">
+            <h3>Como Jogar:</h3>
+            <ul>
+                <li><strong>Ataque:</strong> Clique nos Teemos para atacar (Eles têm 3 de HP).</li>
+                <li><strong>Esquiva:</strong> Quando o Dardo Venenoso chegar perto, aperte o <strong>ESPAÇO</strong> enlouquecidamente!</li>
+                <li><strong>Sobreviva:</strong> Você tem 5 vidas. Aguente o máximo de tempo possível!</li>
+            </ul>
+        </div>
+
+        <h2 style="color: #fff; margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;">Escolha seu Campeão</h2>
+        
+        <div class="champion-container">
+            <div class="champion" onclick="iniciarJogo('yi')">
+                <img src="MasterYi_89.jpg" alt="Master Yi">
+                <p style="text-shadow: 0 0 10px #e6d870;">Master Yi</p>
+            </div>
+            <div class="champion" onclick="iniciarJogo('diana')">
+                <img src="diana.jpeg" alt="Diana">
+                <p style="text-shadow: 0 0 10px #ffffff;">Diana</p>
+            </div>
+            <div class="champion" onclick="iniciarJogo('sejuani')">
+                <img src="sejuani.jpeg" alt="Sejuani">
+                <p style="text-shadow: 0 0 10px #00ffff;">Sejuani</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ui-layer">
+        <button id="btn-voltar" onclick="voltarSelecao()">⬅ Trocar Campeão</button>
+        <div class="status-bar" id="vidas-container">Vidas: <span class="valor" id="life-count">5</span></div>
+        <div class="status-bar">Tempo: <span class="valor" id="time-count">00:00</span></div>
+        <div class="status-bar">Abates: <span class="valor" id="kill-count">0</span></div>
+        <div id="cooldown-msg">Pentakill em Recarga...</div>
+    </div>
+    
+    <div id="pentakill-msg">PENTAKILL!</div>
+    
+    <div id="gameover-msg">
+        <h2>VOCÊ FOI ABATIDO</h2>
+        <p id="final-stats">Nick, você sobreviveu por 00:00</p>
+        <button id="btn-restart" onclick="voltarSelecao()">Tentar Novamente</button>
+    </div>
+
+    <div id="esquiva-overlay"></div>
+    <div id="dano-overlay"></div>
+
+    <canvas id="arena"></canvas>
+
+    <script src="game.js"></script>
+</body>
+</html>
