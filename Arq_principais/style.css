@@ -1,66 +1,103 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treino Wuju - Sobrevivência</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background-color: #090a0f; overflow: hidden;
+    font-family: 'Arial', sans-serif; cursor: crosshair;
+}
 
-    <div id="start-screen">
-        <h1>Treino Wuju</h1>
-        
-        <input type="text" id="player-nick" placeholder="Digite seu Nickname" autocomplete="off" maxlength="15">
-        
-        <div id="instructions">
-            <h3>Como Jogar:</h3>
-            <ul>
-                <li><strong>Ataque:</strong> Clique nos Teemos para atacar (Eles têm 3 de HP).</li>
-                <li><strong>Esquiva:</strong> Quando o Dardo Venenoso chegar perto, aperte o <strong>ESPAÇO</strong> enlouquecidamente!</li>
-                <li><strong>Sobreviva:</strong> Você tem 5 vidas. Aguente o máximo de tempo possível!</li>
-            </ul>
-        </div>
+canvas { display: none; }
 
-        <h2 style="color: #fff; margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;">Escolha seu Campeão</h2>
-        
-        <div class="champion-container">
-            <div class="champion" onclick="iniciarJogo('yi')">
-                <img src="MasterYi_89.jpg" alt="Master Yi">
-                <p style="text-shadow: 0 0 10px #e6d870;">Master Yi</p>
-            </div>
-            <div class="champion" onclick="iniciarJogo('diana')">
-                <img src="diana.jpeg" alt="Diana">
-                <p style="text-shadow: 0 0 10px #ffffff;">Diana</p>
-            </div>
-            <div class="champion" onclick="iniciarJogo('sejuani')">
-                <img src="sejuani.jpeg" alt="Sejuani">
-                <p style="text-shadow: 0 0 10px #00ffff;">Sejuani</p>
-            </div>
-        </div>
-    </div>
+#start-screen {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, #1a1c29 0%, #090a0f 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 100;
+}
 
-    <div id="ui-layer">
-        <button id="btn-voltar" onclick="voltarSelecao()">⬅ Trocar Campeão</button>
-        <div class="status-bar" id="vidas-container">Vidas: <span class="valor" id="life-count">5</span></div>
-        <div class="status-bar">Tempo: <span class="valor" id="time-count">00:00</span></div>
-        <div class="status-bar">Abates: <span class="valor" id="kill-count">0</span></div>
-        <div id="cooldown-msg">Pentakill em Recarga...</div>
-    </div>
-    
-    <div id="pentakill-msg">PENTAKILL!</div>
-    
-    <div id="gameover-msg">
-        <h2>VOCÊ FOI ABATIDO</h2>
-        <p id="final-stats">Nick, você sobreviveu por 00:00</p>
-        <button id="btn-restart" onclick="voltarSelecao()">Tentar Novamente</button>
-    </div>
+#start-screen h1 {
+    color: #e6d870; font-size: 4rem; text-transform: uppercase;
+    letter-spacing: 4px; text-shadow: 0 0 20px #e6d870; margin-bottom: 20px;
+    margin-top: -30px;
+}
 
-    <div id="esquiva-overlay"></div>
-    <div id="dano-overlay"></div>
+#player-nick {
+    padding: 12px 20px; font-size: 1.2rem; border-radius: 8px; border: 2px solid #e6d870;
+    background: rgba(0,0,0,0.5); color: #fff; text-align: center; margin-bottom: 20px;
+    outline: none; transition: box-shadow 0.3s; font-family: 'Arial', sans-serif; text-transform: uppercase;
+}
+#player-nick:focus { box-shadow: 0 0 15px #e6d870; }
+#player-nick::placeholder { color: rgba(255, 255, 255, 0.5); text-transform: none; }
 
-    <canvas id="arena"></canvas>
+#instructions {
+    background: rgba(255, 255, 255, 0.05); padding: 15px 25px; border-radius: 10px;
+    color: #ccc; margin-bottom: 30px; text-align: left; border: 1px solid rgba(255,255,255,0.1);
+}
+#instructions h3 { margin-top: 0; color: #fff; text-align: center; margin-bottom: 10px; text-transform: uppercase; }
+#instructions ul { list-style: none; padding: 0; margin: 0; }
+#instructions li { margin-bottom: 8px; font-size: 1.1rem; }
 
-    <script src="game.js"></script>
-</body>
-</html>
+.champion-container { display: flex; gap: 40px; }
+.champion { text-align: center; cursor: pointer; transition: transform 0.3s, filter 0.3s; filter: grayscale(80%) brightness(0.7); }
+.champion:hover { transform: scale(1.1); filter: grayscale(0%) brightness(1.2); }
+.champion img { width: 200px; height: 200px; object-fit: cover; border-radius: 15px; border: 3px solid transparent; box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: border 0.3s; }
+.champion p { color: #fff; font-size: 1.2rem; margin-top: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
+
+.champion:nth-child(1):hover img { border-color: #e6d870; box-shadow: 0 0 30px #e6d870; }
+.champion:nth-child(2):hover img { border-color: #ffffff; box-shadow: 0 0 30px #ffffff; }
+.champion:nth-child(3):hover img { border-color: #00ffff; box-shadow: 0 0 30px #00ffff; }
+
+#ui-layer {
+    position: absolute; top: 20px; left: 20px; color: #fff; font-size: 20px;
+    text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #fff;
+    z-index: 10; display: none;
+}
+
+#btn-voltar {
+    background: rgba(0, 0, 0, 0.5); border: 2px solid currentColor; color: inherit;
+    padding: 10px 15px; cursor: pointer; border-radius: 5px; margin-bottom: 15px;
+    font-weight: bold; text-transform: uppercase; font-size: 14px;
+    transition: background 0.3s; pointer-events: auto;
+}
+#btn-voltar:hover { background: rgba(255, 255, 255, 0.2); }
+
+.status-bar { margin-bottom: 8px; }
+.valor { font-weight: bold; font-size: 24px; }
+
+#vidas-container { color: #45f542; text-shadow: 0 0 10px #45f542; }
+.vida-perdida { color: #ff0055 !important; text-shadow: 0 0 10px #ff0055 !important; }
+
+#cooldown-msg { font-size: 14px; color: #ff0055; display: none; margin-top: 5px; text-shadow: 0 0 5px #ff0055; }
+
+#pentakill-msg, #gameover-msg {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+    text-align: center; pointer-events: none; opacity: 0; transition: transform 0.5s, opacity 0.5s; z-index: 20;
+}
+
+#pentakill-msg { 
+    color: #ff0055; font-size: 6rem; font-weight: bold; font-style: italic; 
+    text-transform: uppercase; text-shadow: 0 0 30px #ff0055, 0 0 10px #fff; 
+}
+
+#gameover-msg {
+    background: rgba(0, 0, 0, 0.8); padding: 40px; border-radius: 20px; border: 2px solid #ff0000;
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.5);
+}
+#gameover-msg h2 { color: #ff0000; font-size: 4rem; text-shadow: 0 0 20px #ff0000; margin: 0 0 10px 0; font-style: italic; text-transform: uppercase; }
+#final-stats { color: #fff; font-size: 1.8rem; margin-bottom: 30px; text-shadow: 0 0 10px #fff; }
+
+#btn-restart {
+    padding: 15px 30px; font-size: 1.2rem; cursor: pointer; background: #ff0000; color: #fff;
+    border: none; border-radius: 8px; transition: 0.3s; box-shadow: 0 0 15px #ff0000;
+    pointer-events: auto; font-weight: bold; text-transform: uppercase;
+}
+#btn-restart:hover { transform: scale(1.05); background: #ff3333; }
+
+.show-msg { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; pointer-events: auto !important; }
+.anim-shake { animation: shake 0.5s ease-in-out infinite alternate; }
+
+#esquiva-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #a9c6d9; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 5; }
+#dano-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ff0000; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 5; }
+
+@keyframes shake {
+    from { transform: translate(-52%, -48%) scale(1); }
+    to { transform: translate(-48%, -52%) scale(1.05); }
+}
